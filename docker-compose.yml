@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15
+    container_name: shopverse-db
+    environment:
+      POSTGRES_DB: shopverse
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - shopverse-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: shopverse-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@shopverse.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8080:8080"
+    networks:
+      - shopverse-network
+    depends_on:
+      - database
+
+volumes:
+  postgres_data:
+
+networks:
+  shopverse-network:
+    driver: bridge
